@@ -1,4 +1,4 @@
-# jahanBakhshi Eshop
+# suzana Eshop
 
 a simple e-commerce using django and drf
 
