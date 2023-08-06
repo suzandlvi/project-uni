@@ -1,0 +1,13 @@
+Django==4.2
+django_filter==23.1
+django_jalali_date==1.0.1
+django_templated_mail==1.1.1
+djangorestframework==3.14.0
+djangorestframework_simplejwt==5.2.2
+drf_spectacular==0.26.1
+drf_yasg==1.21.5
+PyJWT==2.6.0
+PyJWT==2.6.0
+redis==4.4.2
+Requests==2.28.2
+weasyprint==58.1

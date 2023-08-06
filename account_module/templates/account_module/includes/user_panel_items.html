@@ -1,0 +1,16 @@
+<div class="card mt-3 edit-section">
+    <ul class="list-group user-panel-item">
+        <li class="list-group-item {% if request.resolver_match.url_name == 'user_panel_view' %}active-item{% endif %}">
+            <a href="{% url 'user_panel_view' %}">پنل کاربری</a>
+        </li>
+        <li class="list-group-item {% if request.resolver_match.url_name == 'edit_user_info_view' %}active-item{% endif %}">
+            <a href="{% url 'edit_user_info_view' %}">ویرایش اطلاعات</a>
+        </li>
+        <li class="list-group-item {% if request.resolver_match.url_name == 'edit_user_password_view' %}active-item{% endif %}">
+            <a href="{% url 'edit_user_password_view' %}">تغییر کلمه عبور</a>
+        </li>
+        <li class="list-group-item {% if request.resolver_match.url_name == 'order_history_view' %}active-item{% endif %}">
+            <a href="{% url 'order_history_view' %}">لیست سفارشات</a>
+        </li>
+    </ul>
+</div>

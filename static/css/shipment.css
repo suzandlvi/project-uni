@@ -1,0 +1,65 @@
+.cart-purchase-price-container{
+    width: 95%;
+    margin: 20px auto;
+}
+.shipment-container{
+    display: flex;
+}
+.personal-info{
+    /*text-align: center;*/
+    width: 50%;
+}
+.address-info{
+    /*text-align: center;*/
+    width: 50%;
+}
+.shipment-container .shipment-header{
+    font-weight: bold;
+    font-size: 1.2em;
+    border-bottom: 1px solid lightgray;
+    padding: 8px 0;
+    text-align: center;
+    background-color: #301860;
+    color: white;
+    width: 95%;
+    margin: 0 auto;
+    border-radius: 10px;
+}
+.personal-info-form{
+    width: 90%;
+    margin: 0 auto;
+}
+.personal-info-form label{
+    margin-top: 15px;
+    opacity: .8;
+}
+.personal-info-form label span{
+    color: red;
+    font-size: 1.2em;
+}
+.personal-info-form .double-input{
+    display: flex;
+}
+.personal-info-form .double-input div{
+    width: 40%;
+    margin: 0 auto;
+}
+
+.shipment-button{
+    background-color: #196ec0;
+    color: white;
+    width: 50%;
+    margin: 30px auto;
+    padding: 10px 0;
+    transition: .4s background-color;
+}
+.shipment-button:hover{
+    background-color: #cc25a9;
+    color: white;
+}
+
+.error-field{
+    color: red;
+    opacity: .8;
+    padding: 5px 0;
+}

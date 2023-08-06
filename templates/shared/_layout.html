@@ -1,0 +1,22 @@
+{% load render_partial %}
+{% load cache %}
+<!doctype html>
+<html lang="en" dir="rtl">
+<head>
+    <title>{% block title %}{% endblock %}</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    {% include 'shared/header_references.html' %}
+    {% block custom_style %}{% endblock %}
+</head>
+<body>
+{% render_partial 'home_module.views.site_header_component' %}
+{% block content %}{% endblock %}
+{#{% cache 600 footer_component %}#}
+{#    {% include 'shared/site_footer_component.html' %}#}
+{#{% endcache %}#}
+{% include 'shared/site_footer_component.html' %}
+{% include 'shared/footer_references.html' %}
+{% block custom_script %}{% endblock %}
+</body>
+</html>

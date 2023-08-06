@@ -1,0 +1,35 @@
+{% extends 'shared/_layout.html' %}
+{% load static %}
+{% block title %}
+    صفحه ورود
+{% endblock %}
+{% block custom_style %}
+    <link rel="stylesheet" href="{% static 'css/register.css' %}">
+{% endblock %}
+{% block content %}
+    <section class="register-container">
+        <div class="login-section register-section">
+            <div class="register-inner">
+                <div class="header">فرم ورود</div>
+                <div class="content">
+                    <form class="register-form" id="register-form" action="{% url 'login_view' %}" method="post">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        {% if request.GET.next %}
+                            <input name="next" type="hidden" value="{{ request.GET.next }}">
+                        {% endif %}
+                        <button id="submit-register-btn" class="btn mx-auto d-block" type="submit">ورود</button>
+                        {% for field in form %}
+                            {% for error in field.errors %}
+                                <p class="text-danger">{{ error }}</p>
+                            {% endfor %}
+                        {% endfor %}
+                        <p>اگر حساب کاربری ندارید برای <a href="{% url 'register_view' %}">ثبت نام</a> کلیک کنید</p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+{% block custom_script %}
+{% endblock %}

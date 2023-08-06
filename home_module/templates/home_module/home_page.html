@@ -1,0 +1,190 @@
+{% extends 'shared/_layout.html' %}
+{% load static %}
+{% load poll_extras %}
+{% load thumbnail %}
+{% block title %}
+    صفحه اصلی
+{% endblock %}
+{% block custom_style %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <link rel="stylesheet" href="{% static 'css/index.css' %}">
+    <link rel="stylesheet" href="{% static 'css/product-list.css' %}">
+{% endblock %}
+{% block content %}
+    <section class="email-send">
+        <div class="slider">
+            <div class="item  active" id="slide1">
+                <img src="{% static 'images/s1.jpg' %}" alt=""/>
+                <span>آهنگ ها رو زنده تر از اون چیزی که هستن گوش بده</span>
+            </div>
+            <div class="item" id="slide2">
+                <img src="{% static 'images/s2.jpg' %}" alt=""/>
+                <span style="color: white">آهنگ ها رو زنده تر از اون چیزی که هستن گوش بده</span>
+            </div>
+            <div class="item" id="slide3">
+                <img src="{% static 'images/s3.jpg' %}" alt=""/>
+                <span>آهنگ ها رو زنده تر از اون چیزی که هستن گوش بده</span>
+            </div>
+        </div>
+        <div class="slider-buttons">
+            <i onclick="setSlide('slide1' , 1, this)" class="fas fa-circle active" id="slider-btn-1"></i>
+            <i onclick="setSlide('slide2' , 2, this)" class="fas fa-circle" id="slider-btn-2"></i>
+            <i onclick="setSlide('slide3' , 3, this)" class="fas fa-circle" id="slider-btn-3"></i>
+        </div>
+        {#        <div class="container">#}
+        {#            <div class="email-send-content">#}
+        {#                <p class="email-send-text">جهت اطلاع از جدیدترین تخفیف ها ایمیل خود را وارد کنید و ایمیل خود را با ما به#}
+        {#                    اشتراک بگذارید</p>#}
+        {#                <form class="email-send-form" action="#">#}
+        {#                    <input type="text" class="form-control email-send-input" placeholder="آدرس ایمیل ...">#}
+        {#                    <input type="submit" class="btn btn-info text-white" value="ثبت نام">#}
+        {#                </form>#}
+        {#            </div>#}
+        {#        </div>#}
+    </section>
+    <section class="items-section">
+        <div class="container">
+            <div class="grid-container">
+                <div class="grid-item">
+                    <i class="fa-solid fa-truck"></i>
+                    <h2>ارسال رایگان</h2>
+                    <p>لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ، و با استفاده از طراحان گرافیک
+                        است، </p>
+                </div>
+                <div class="grid-item">
+                    <i class="fa-solid fa-tags"></i>
+                    <h2>تخفیف زیاد</h2>
+                    <p>لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ، و با استفاده از طراحانگرافیک است، </p>
+                </div>
+                <div class="grid-item">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <h2>محصولات زیاد</h2>
+                    <p>لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ، و با استفاده از طراحانگرافیک است، </p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section style="direction: ltr" class="ftco-section">
+        <div class="products-container">
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <h2 class="heading-section mb-5 pb-md-4">جدیدترین محصولات</h2>
+                </div>
+                <div class="col-md-12 bg-white rounded-2">
+                    <div class="featured-carousel owl-carousel">
+                        {% for products in new_products %}
+                            <div class="item">
+                                <div onclick="goToDetailPage('{{ products.get_absolute_url }}')" style="direction:rtl;"
+                                     class="purchase-item">
+                                    <div class="purchase-header">
+                                        {% thumbnail products.image "300x300" qulity="95" crop="center" as im %}
+                                            <img alt="{{ products.title }}" src="{{ im.url }}">
+                                        {% endthumbnail %}
+                                    </div>
+                                    <span class="hot-offer">پیشنهاد ویژه</span>
+                                    <div class="purchase-text">
+                                        {{ products.title }}
+                                    </div>
+                                    <div class="purchase-button">
+                                        <button class="addtocart">
+                                            <div class="pretext">
+                                                <i class="fas fa-cart-plus"></i> افزودن به سبد خرید
+                                            </div>
+
+                                            <div class="pretext done">
+                                                <div class="posttext"><i class="fas fa-check"></i> اوکبه</div>
+                                            </div>
+
+                                        </button>
+                                    </div>
+                                    <div class="purchase-footer">
+                                        <div class="right">{{ products.price|three_digits_currency }}</div>
+                                        <div class="left"><span> {{ products.vote_avg }} </span><i
+                                                class="fa-solid fa-star"></i></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div onclick="goToDetailPage('{{ products.get_absolute_url }}')" style="direction:rtl;"
+                                     class="purchase-item">
+                                    <div class="purchase-header">
+                                        {% thumbnail products.image "300x300" qulity="95" crop="center" as im %}
+                                            <img alt="{{ products.title }}" src="{{ im.url }}">
+                                        {% endthumbnail %}
+                                    </div>
+                                    <span class="hot-offer">پیشنهاد ویژه</span>
+                                    <div class="purchase-text">
+                                        {{ products.title }}
+                                    </div>
+                                    <div class="purchase-button">
+                                        <button class="addtocart">
+                                            <div class="pretext">
+                                                <i class="fas fa-cart-plus"></i> افزودن به سبد خرید
+                                            </div>
+
+                                            <div class="pretext done">
+                                                <div class="posttext"><i class="fas fa-check"></i> اوکبه</div>
+                                            </div>
+
+                                        </button>
+                                    </div>
+                                    <div class="purchase-footer">
+                                        <div class="right">{{ products.price|three_digits_currency }}</div>
+                                        <div class="left"><span> {{ products.vote_avg }} </span><i
+                                                class="fa-solid fa-star"></i></div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section>
+        <div class="poster-container">
+            <div class="poster-section">
+                <div class="poster"><img src="{% static 'images/poster-1.jpg' %}" alt=""></div>
+                <div class="poster"><img src="{% static 'images/poster-2.jpg' %}" alt=""></div>
+                <div class="poster"><img src="{% static 'images/poster-3.png' %}" alt=""></div>
+                <div class="poster"><img src="{% static 'images/poster-4.jpg' %}" alt=""></div>
+            </div>
+            <div class="big-poster">
+                <img src="{% static 'images/poster/952062.png' %}" alt="">
+            </div>
+        </div>
+    </section>
+{% endblock %}
+{% block custom_script %}
+    <script>
+        function goToDetailPage(url) {
+            location.href = url
+        }
+
+        let sliderIndex = 1;
+
+        function setSlide(input, index, e) {
+            sliderIndex = index;
+            let slider = document.querySelector(`#${input}`)
+            let sliders = document.querySelectorAll('.slider .item')
+            sliders.forEach((element => {
+                element.classList.remove('active')
+            }))
+            slider.classList.add('active')
+            let buttons = document.querySelectorAll('.slider-buttons i')
+            buttons.forEach(element=>{
+                element.classList.remove('active')
+            })
+            e.classList.add('active')
+        }
+
+        setInterval(() => {
+            sliderIndex += 1;
+            if (sliderIndex === 4) {
+                sliderIndex = 1;
+            }
+            setSlide(`slide${sliderIndex}`, sliderIndex, document.querySelector(`#slider-btn-${sliderIndex}`))
+        }, 4000)
+
+    </script>
+{% endblock %}

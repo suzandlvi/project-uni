@@ -1,0 +1,79 @@
+{% extends 'shared/_layout.html' %}
+{% load static %}
+{% block title %}
+    ارتباط با ما
+{% endblock %}
+{% block custom_style %}
+    <link rel="stylesheet" href="{% static 'css/contact-us.css' %}">
+{% endblock %}
+{% block content %}
+    <section class="contactus-container">
+        <div class="map-container">
+            <div class="map-section">
+                <div class="map-header">آدرس فروشگاه برای مراجعه حضوری</div>
+                <div class="map">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d6474.449827429636!2d50.95480606571345!3d35.76985113630388!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3f8d9596e8532aff%3A0x84cc0b502d56215b!2sStore%20Home%20and%20Building%20Pyrlvrn!5e0!3m2!1sen!2snl!4v1672590926306!5m2!1sen!2snl"
+                            width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy"
+                            referrerpolicy="no-referrer-when-downgrade"></iframe>
+                </div>
+            </div>
+        </div>
+        <div class="info-container">
+            <div class="info-section">
+                <div class="info-header map-header">اطلاعات تماس و راه های ارتباطی</div>
+                <div class="info-content">
+                    <div class="info-item"><i class="fa-solid fa-square-phone"></i> <span>شماره تماس : <a
+                            href="tel:02632736540">{{ site_setting.phone }}</a></span></div>
+                    <div class="info-item"><i class="fa-solid fa-envelope"></i> <span>ایمیل : <a
+                            href="mailto:amirhossein6168@gmail.com">{{ site_setting.email }}</a></span></div>
+                    <div class="info-item"><i class="fa-solid fa-map-location-dot"></i>
+                        <span>آدرس : {{ site_setting.address }}</span>
+                    </div>
+                    <div class="info-item"><i class="fa-brands fa-telegram"></i> <span>شماره تلگرام : <a
+                            href="tel:+989302483540">{{ site_setting.telegram_number }}</a></span></div>
+                </div>
+            </div>
+        </div>
+        <div class="contact-form-container">
+            <div class="contact-form-header map-header">
+                فرم تماس با ما
+            </div>
+            <div class="contact-form-section">
+                <form id="contact-us-form" action="{% url 'contact-us-view' %}" method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button class="btn mx-auto d-block" type="submit">ارسال</button>
+                </form>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+{% block custom_script %}
+    <script>
+        let contactUsForm = $('#contact-us-form');
+        contactUsForm.submit(function (e) {
+            e.preventDefault()
+            $.ajax({
+                method: "POST",
+                url: e.target.action,
+                data: contactUsForm.serialize(),
+                success: function (res) {
+                    if (res.status === 'success') {
+                        e.target.reset()
+                        showNotification(res, 'موفق')
+                    } else if (res.status === 'error') {
+                        e.target.reset()
+                        showNotification(res, 'شکست')
+                    }
+                },
+                error: function (res) {
+                    let result = {
+                        message: 'مشکلی رخ داد',
+                        satus: 'error'
+                    }
+                    showNotification(result, 'شکست');
+                }
+            })
+        })
+    </script>
+{% endblock %}

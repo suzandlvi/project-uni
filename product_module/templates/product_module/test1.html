@@ -1,0 +1,102 @@
+{% extends 'shared/_layout.html' %}
+
+{% block title %}
+    random
+{% endblock %}
+{% block custom_style %}
+    <style>
+        #progressbar {
+            height: 6px;
+            border-radius: 3px;
+            width: 0%;
+            border-color: green;
+            background-color: green;
+        }
+    </style>
+{% endblock %}
+{% block content %}
+    <button id="dlbtn">
+        Download
+    </button>
+    <hr id="progressbar" align="left"/>
+{% endblock %}
+{% block custom_script %}
+    <script>
+        let TOTAL_ESTIMATE = 1016 * 1024;
+        // I use a hr as a
+        let bar = document.getElementById("progressbar");
+        let btn = document.getElementById("dlbtn");
+
+        var js; // to hold the created dom element
+        var fileName; // to hold my cacheBusted script adress
+
+        /* this function will be called several times during (the first) download, with info about how much data is loaded */
+
+        function onProgress(e) {
+            var percentComplete = e.loaded / TOTAL_ESTIMATE;
+            console.log(e.loaded)
+            if (e.lengthComputable) {
+                percentComplete = e.loaded / e.total;
+            }
+            p = Math.round(percentComplete * 100);
+            console.log("progress", p + "%,", e.loaded, "bytes loaded")
+            bar.style = "width: " + (5 + .6 * p) + "%"; // I just assume dl will be around 60-70% of total time
+
+        }
+
+        /* this function is called when info comes. at the end of the initial download, the readystate will be 4 so we then set the file's src attribute, triggering a re-download but taking advantage of the browser's cache. It's not ideal, and simply `eval` ing the data would probably yield better results. I just assumed you wanted a <script> tag on your page, and for it to be evaluated. */
+        function onReadyState(e) {
+            let r = e.target;
+            //this is lifted almost verbatim from http://vanilla-js.com/ ;)
+            if (r.readyState != 4 || r.status != 200)
+                return;
+            let l = r.responseText.length;
+            console.log("Success !", l, "bytes total (" + Math.round(l / 1024) + " KB )");
+            bar.style = "width: 70%";
+            //just add / to next line to toggle ending methods
+            /* you could speed up the proces by simply eval()ing the returned js. like so (please be aware of security concerns) :
+            eval.bind(window)(r.responseText);
+            onScriptLoaded();
+            /*/
+
+            {#js.src = fileName;#}
+            bar.style = "width: 80%";
+            {#var ref = document.getElementsByTagName('script')[0];#}
+            {#ref.parentNode.insertBefore(js, ref);#}
+            //*/
+
+        };
+
+        //this is called when the script has been evaluated :
+        function onScriptLoaded() {
+            bar.style = "width: 100%; background-color: lightgreen;";
+            button.disabled = false;
+            console.log("script has been evaluated ?", THREE ? "yes" : "no"); // the demo file exposes window.THREE
+        };
+
+        btn.addEventListener('click', function downloadFile(event) {
+            let file = '/products/test-download/'
+            btn.disabled = true;
+            (function (d) {
+                // this helps to test this script multiple times. don't keep it
+                fileName = file + "?bustCache=" + new Date().getTime();
+
+
+                console.log("inserting new script");
+                {#js = d.createElement('script');#}
+                {#js.type = "text/javascript";#}
+                {#js.defer = "defer";#}
+                {#js.async = "async";#}
+                var r = new XMLHttpRequest();
+                bar.style = "width: 5%"; //always react ASAP
+                r.addEventListener("progress", onProgress);
+                r.open("GET", fileName, true);
+                r.onreadystatechange = onReadyState;
+                {#js.onload = onScriptLoaded;#}
+                r.send();
+                bar.style = "width: 100%; background-color: lightgreen;";
+                // My code to display a progress bar here?
+            }(document));
+        })
+    </script>
+{% endblock %}

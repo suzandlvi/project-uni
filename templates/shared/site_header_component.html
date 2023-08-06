@@ -1,0 +1,55 @@
+{% load static %}
+<header id="header">
+    <div class="container navbar-container">
+        <div class="navbar-items">
+            <img src="{% static 'images/icon.png' %}" alt="">
+            <a href="#" class="navbar-brand">سایت امیران</a>
+            <ul class="navbar-ul">
+                <li><a target="_blank" href="{% url 'home_view' %}">خانه</a></li>
+                <li><a href="#">مقالات</a></li>
+                <li><a target="_blank" href="{% url 'products_list_view' %}">محصولات</a></li>
+                <li><a target="_blank" href="{% url 'contact-us-view' %}">تماس با ما</a></li>
+            </ul>
+        </div>
+        <button onclick="navToggle()" id="navbar-btn"><img id="navbar-icon" src="{% static 'images/list.svg' %}" alt="">
+        </button>
+        {% if not request.user.is_authenticated %}
+            <div class="navbar-buttons btn-group" role="group">
+                <button id="login-btn" type="button" class="btn button-36"><a target="_blank"
+                                                                              href="{% url 'login_view' %}">ورود</a>
+                </button>
+                <button id="register-btn" type="button" class="btn button-36"><a target="_blank"
+                                                                                 href="{% url 'register_view' %}">ثبت
+                    نام</a></button>
+                <div class="cart-shopping-icon">
+                    <a target="_blank" href="{% url 'cart_view' %}"><i class="fa-solid fa-cart-shopping"></i></a>
+                </div>
+            </div>
+        {% else %}
+            <div class="d-flex">
+                <div class="cart-user-icon">
+                    <a target="_blank" href="{% url 'user_panel_view' %}"><i class="fa-solid fa-user"></i></a>
+                </div>
+                <div class="cart-shopping-icon">
+                    {% if order_details_count %}
+                        <span class="badge badge-danger">{{ order_details_count }}</span>
+                    {% endif %} <a target="_blank" href="{% url 'cart_view' %}"><i class="fa-solid fa-cart-shopping"></i></a>
+                </div>
+                <div class="cart-shopping-icon logout-shopping-icon">
+                    <a href="{% url 'logout_view' %}"><i class="fa-solid fa-right-from-bracket"></i></a>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+    <div class="container">
+        <div id="responsive-navbar">
+            <a href="#" class="navbar-brand">سایت امیران</a>
+            <ul>
+                <li><a target="_blank" href="{% url 'home_view' %}">خانه</a></li>
+                <li><a href="">مقالات</a></li>
+                <li><a target="_blank" href="{% url 'products_list_view' %}">محصولات</a></li>
+                <li><a target="_blank" href="{% url 'contact-us-view' %}">تماس با ما</a></li>
+            </ul>
+        </div>
+    </div>
+</header>

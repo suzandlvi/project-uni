@@ -1,0 +1,346 @@
+{% extends 'shared/_layout.html' %}
+{% load static %}
+{% load thumbnail %}
+{% load poll_extras %}
+{% block title %}
+    صفحه اطلاعات محصول
+{% endblock %}
+{% block custom_style %}
+    <link rel="stylesheet" href="{% static 'css/product-list.css' %}">
+    <link rel="stylesheet" href="{% static 'css/product-detail.css' %}">
+{% endblock %}
+{% block content %}
+    <section class="product-container">
+        <div class="product-detail-container row row-cols-1 row-cols-lg-3">
+            <div class="product-image-container">
+                <div class="product-image"><img src="{{ product.image.url }}"
+                                                alt="product-image"></div>
+                <a class="btn btn-primary m-2 d-block w-25 mx-auto" id="show_large_image_modal"
+                   href="{{ product.image.url }}"
+                   data-lightbox="product-image">
+                    بزرگنمایـی
+                </a>
+                <div class="product-gallery">
+                    {% for image in gallery %}
+                        <div><img src="{{ image.image.url }}" id="{{ image.id }}" alt=""></div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="product-detail-text-container">
+                <div class="product-detail-text-header">
+                    {{ product.title }}
+                    <p>شناسه : {{ product.id }}</p>
+                </div>
+                <h2 class="hr-lines">توضیحات محصول</h2>
+                <div class="product-detail-text">
+                    {{ product.description }}
+                </div>
+                <div class="product-detail-text-logo d-flex justify-content-between">
+                    <div class="product-logo"><i class="fa-solid fa-truck-fast"></i><span>تحویل اکسپرس</span></div>
+                    <div class="product-logo"><i class="fa-solid fa-tag"></i><span>گارانتی معتبر</span></div>
+                    <div class="product-logo"><i class="fa-solid fa-cart-shopping"></i><span>24 ساعت مهلت تعویض</span>
+                    </div>
+                </div>
+            </div>
+            <div class="product-purchase-container position-relative">
+                <div class="product-purchase-section">
+                    <div class="product-guaranty"><i class="fa-regular fa-circle-check"></i><span>گارانتی : 72 ساعت ویژه سایت امیران</span>
+                    </div>
+                    <div class="product-price"><span>{{ product.price|three_digits_currency }}</span></div>
+                    <div class="product-purchase">
+                        <div class="purchase d-flex justify-content-center align-items-center">
+                            {% if product.quantity > 0 %}
+                                {% if not order %}
+                                    <div class="purchase-button main">
+                                        <button class="addtocart addtocart2">
+                                            <div onclick="addToCart({{ product.id }})" class="pretext">
+                                                <i class="fas fa-cart-plus"></i> افزودن به سبد خرید
+                                            </div>
+                                            <div class="pretext done">
+                                                <div class="posttext"><i class="fas fa-check"></i> اضافه شد</div>
+                                            </div>
+                                        </button>
+                                    </div>
+                                    <div id="product-count-div">
+                                        <input class="form-control w-50 mx-3" value="1" type="number" name=""
+                                               id="product-count-input">
+                                    </div>
+                                {% else %}
+                                    <a href="{% url 'cart_view' %}">
+                                        <button class="addtocart addtocart2">
+                                            <div class="text-white">رفتن به سبد خرید</div>
+                                        </button>
+                                    </a>
+                                {% endif %}
+                            {% else %}
+                                <div class="alert alert-danger">
+                                    موجود نیست!
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="d-flex flex-column align-items-center justify-content-center">
+                            <form id="star-form" action="#">
+                                <div class="rate">
+                                    <input type="radio" id="star5" name="rate" value="5"/>
+                                    <label for="star5" title="text">5 stars</label>
+                                    <input type="radio" id="star4" name="rate" value="4"/>
+                                    <label for="star4" title="text">4 stars</label>
+                                    <input type="radio" id="star3" name="rate" value="3"/>
+                                    <label for="star3" title="text">3 stars</label>
+                                    <input type="radio" id="star2" name="rate" value="2"/>
+                                    <label for="star2" title="text">2 stars</label>
+                                    <input type="radio" id="star1" name="rate" value="1"/>
+                                    <label for="star1" title="text">1 star</label>
+                                </div>
+                            </form>
+                            <div class="product-inventory my-2">موجودی : {{ product.quantity }} عدد</div>
+                            <div class="product-inventory">میانگین امتیاز : <span
+                                    id="vote-avg">{{ product.vote_avg }}</span> <i
+                                    class="fa-solid fa-star"></i></div>
+                        </div>
+                    </div>
+
+                </div>
+                <span class="position-absolute top-0 start-100 translate-middle badge bg-danger">جدید<span
+                        class="visually-hidden">unread messages</span></span></div>
+        </div>
+        <div class="product-detail-container">
+            <div class="product-detail-header">
+                <i class="fa-solid fa-list"></i> مشخصات
+            </div>
+            <hr>
+            <div class="product-detail">
+{#                {% for i in '012345678'|make_list %}#}
+                    {% for attribute in product.product_attributes.all %}
+                        <div class="product-detail-title">{{ attribute.product_detail.key }}</div>
+                        <div class="product-detail-content">{{ attribute.value }}</div>
+                    {% endfor %}
+{#                {% endfor %}#}
+            </div>
+        </div>
+        <div class="product-detail-container">
+            <div class="product-detail-header">
+                <i class="fa-solid fa-comment-dots"></i> افزودن دیدگاه
+            </div>
+            <div class="commend-container">
+                <form id="product-comment-form" action="{% url 'product_detail_view' slug=product.slug %}"
+                      method="post">
+                    {% csrf_token %}
+                    {#                    <label class="my-2 font-weight-bold" for="name">نام شما : </label>#}
+                    {#                    <input name="user" id="name" type="text" class="form-control" placeholder="نام شما ...">#}
+                    <label class="my-2 font-weight-bold" for="text">متن نظر : </label>
+                    <textarea class="form-control" name="commend_text" id="text" cols="30" rows="10"
+                              placeholder="متن نظر ..."></textarea>
+                    <div class="radio-inputs">
+                        <input type="radio" name="idea" value="Good" id="test">
+                        <label for="test"><i class="fa-solid fa-thumbs-up"></i></label>
+                        <input type="radio" name="idea" value="Bad" id="test2">
+                        <label for="test2"><i class="fa-solid fa-thumbs-down"></i></label>
+                        <input type="radio" name="idea" value="Poker" id="test3">
+                        <label for="test3"><i class="fa-solid fa-face-meh"></i></label>
+                    </div>
+                    <button type="submit" class="btn mt-3 btn-success d-block mx-auto">ثبت</button>
+                </form>
+            </div>
+            <div class="product-detail-header">
+                <i class="fa-solid fa-comment"></i> دیدگاه کاربران
+            </div>
+            <div class="container py-5">
+                <div class="row d-flex justify-content-center">
+                    <div class="col-md-12 col-lg-10">
+                        <div class="card text-dark">
+                            {% if comments %}
+                                {% for comment in comments %}
+                                    <div class="card-body p-4 my-3">
+                                        <div class="d-flex flex-start">
+                                            {% thumbnail comment.user.avatar "60x60" crop="center" qulity="95" as im %}
+                                                <img class="rounded-circle shadow-1-strong me-3"
+                                                     src="{% if comment.user.avatar %} {{ im.url }}{% else %}
+                                             {% static 'images/icon.png' %}
+                                              {% endif %}"
+                                                     alt="avatar"
+                                                     width="60"
+                                                     height="60"/>
+                                            {% endthumbnail %}
+                                            <div>
+                                                <h6 class="fw-bold mb-1">
+                                                    {% if comment.user.first_name and comment.user.last_name %}
+                                                        <span class="text-muted">{{ comment.user.get_full_name }}</span>
+                                                    {% else %}
+                                                        <span class="text-muted">{{ comment.user.email }}</span>
+                                                    {% endif %} </h6>
+                                                <div class="mb-0 mt-2 d-flex justify-content-between">
+                                                    <span>{{ comment.commend_text }}</span>
+                                                    <span class="ms-5 commend-mode">{{ comment.commend_mode|commend_mode }}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr class="my-0"/>
+                                {% endfor %}
+                            {% else %}
+                                <h1 class="text-center text-muted py-2">هیچ کامنتی برای این محصول ثبت نشده است</h1>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="product-detail-container">
+            <div class="product-detail-header">
+                <i class="fa-solid fa-cart-shopping"></i> محصولات مشابه
+            </div>
+            <div id="product-list-container" class="purchase-container">
+                {% for related_product in related_products %}
+                    <div onclick="goToDetailPage('{% url 'product_detail_view' slug=related_product.slug %}')"
+                         class="purchase-item">
+                        <div class="purchase-header"><img
+                                src="{{ related_product.image.url }}">
+                        </div>
+                        <div class="purchase-text">
+                            {{ related_product.title }}
+                        </div>
+                        <div class="purchase-button">
+                            <button class="addtocart">
+                                <div class="pretext">
+                                    <i class="fas fa-cart-plus"></i> افزودن به سبد خرید
+                                </div>
+
+                                <div class="pretext done">
+                                    <div class="posttext"><i class="fas fa-check"></i> اوکبه</div>
+                                </div>
+
+                            </button>
+                        </div>
+                        <div class="purchase-footer">
+                            <div class="right">{{ related_product.price | three_digits_currency }}</div>
+                            <div class="left"><span> {{ related_product.vote_avg }} </span><i
+                                    class="fa-solid fa-star"></i></div>
+                        </div>
+                    </div>
+                {% endfor %}
+
+            </div>
+        </div>
+    </section>
+    <div class="modal-1"></div>
+{% endblock %}
+{% block custom_script %}
+    <script>
+        let productVoteAvg = '{{ user_vote }}';
+        if (productVoteAvg !== '0') {
+            let voteInput = document.querySelector(`#star-form input[value='${productVoteAvg}']`);
+            voteInput.checked = true;
+        }
+        let productCommentForm = $('#product-comment-form')
+        productCommentForm.submit(function (e) {
+            e.preventDefault()
+            $body = $("body");
+            $(document).ajaxStart(function () {
+                console.log('ajax started')
+                $body.addClass("loading");
+            });
+            $(document).ajaxStop(function () {
+                console.log('ajax ended')
+                $body.removeClass("loading");
+            })
+            $.ajax({
+                method: "POST",
+                url: e.target.action,
+                data: productCommentForm.serialize(),
+                success: function (res) {
+                    if (res.status === 'success') {
+                        showNotification(res, 'موفق')
+                        e.target.reset()
+                    } else if (res.status === 'error') {
+                        showNotification(res, 'شکست')
+                    }
+                },
+                error: function (res) {
+                    showNotification({
+                        message: 'لطفا از اتصال اینترنت خود اطمینان حاصل فرمایید',
+                        status: 'error'
+                    }, 'شکست')
+                }
+            })
+        })
+
+        let starFormInputs = document.querySelectorAll('#star-form input')
+        starFormInputs.forEach((e) => {
+            e.addEventListener('input', ev => {
+                $body = $("body");
+                $(document).ajaxStart(function () {
+                    $body.addClass("loading");
+                });
+                $(document).ajaxStop(function () {
+                    $body.removeClass("loading");
+                })
+                $.ajax({
+                    method: "POST",
+                    url: '{% url 'product_detail_view' slug=product.slug %}',
+                    data: {
+                        star: ev.target.value
+                    },
+                    headers: {
+                        'X-CSRFToken': getCookie("csrftoken")
+                    },
+                    success: function (res) {
+                        if (res.status === 'success') {
+                            showNotification(res, 'موفق')
+                            $('#vote-avg').html(res.vote_avg)
+                        } else if (res.status === 'error') {
+                            showNotification(res, 'شکست')
+                        }
+                    },
+                    error: function (res) {
+                        showNotification({
+                            message: 'لطفا از اتصال اینترنت خود اطمینان حاصل فرمایید',
+                            status: 'error'
+                        }, 'شکست')
+                    }
+                })
+            })
+        })
+
+
+        function addToCart(productId) {
+            $.ajax({
+                method: "POST",
+                url: '{% url 'add_product_to_order_view' %}',
+                data: {
+                    product_id: productId,
+                    count: document.getElementById('product-count-input').value
+                },
+                headers: {
+                    'X-CSRFToken': getCookie("csrftoken")
+                },
+                success: function (res) {
+                    if (res.status === 'success') {
+                        showNotification(res, 'موفق')
+                        $('.purchase-button.main').fadeOut(700, function () {
+                            $('.purchase-button.main').html(` <a href="{% url 'cart_view' %}">
+                                    <button class="addtocart addtocart2">
+                                        <div class="text-white">رفتن به سبد خرید</div>
+                                    </button>
+                                </a>`).fadeIn(500)
+                        })
+                        $('#product-count-div').fadeOut(700)
+                    } else if (res.status === 'error') {
+                        showNotification(res, 'شکست')
+                    }
+                },
+                error: function (res) {
+                    console.log("salam dabsh khobi?")
+                    showNotification({
+                        message: 'لطفا از اتصال اینترنت خود اطمینان حاصل فرمایید',
+                        status: 'error'
+                    }, 'شکست')
+                }
+            })
+        }
+
+        function goToDetailPage(url) {
+            location.href = url
+        }
+    </script>
+{% endblock %}

@@ -1,0 +1,68 @@
+.user-panel-container {
+    background-color: #cad1c3;
+    padding-top: 20px;
+    font-family: Vazirmatn, sans-serif;
+    min-height: 80vh;
+}
+
+.edit-section a {
+    color: #0f6674;
+}
+
+.user-profile {
+    width: 200px;
+    height: 200px;
+}
+
+/*.user-panel-item-group li i{*/
+/*    margin: 0 0 0 10px;*/
+/*}*/
+
+/*.user-panel-item-group{*/
+/*    !*width: 90%;*!*/
+/*    !*margin: auto;*!*/
+/*}*/
+/*.user-panel-item-group li{*/
+/*    list-style: none;*/
+/*    padding: 7px 0;*/
+/*}*/
+/*.user-panel-item-group li:hover{*/
+/*    background-color: lightgray;*/
+/*}*/
+
+/*.user-panel-item li {*/
+/*    transition: .3s border-right;*/
+/*}*/
+
+.user-panel-item li:hover {
+    border-right: 4px solid red;
+}
+
+.user-panel-item li a {
+    width: 100%;
+    display: inline-block;
+}
+
+.user-panel-item li a:hover {
+    color: #301860;
+}
+.user-panel-item .active-item{
+    background-color: #cc25a9;
+}
+.user-panel-item .active-item a{
+    color: white;
+}
+.user-panel-item .active-item a:hover{
+    color: white;
+}
+
+.checkout-btn {
+    background-color: #301860;
+    color: white;
+    transition: .3s background-color;
+}
+
+.checkout-btn:hover {
+    background-color: #cc25a9;
+    color: white;
+}

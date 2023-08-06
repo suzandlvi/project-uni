@@ -1,0 +1,228 @@
+{% extends 'shared/_layout.html' %}
+{% load static %}
+{% load thumbnail %}
+{% load poll_extras %}
+{% block title %}
+    لیست محصولات
+{% endblock %}
+{% block custom_style %}
+    <link rel="stylesheet" href="{% static 'css/product-list.css' %}">
+{% endblock %}
+{% block content %}
+    <div id="grid-container">
+        {#        <section id="category">#}
+        {#            <div class="container h-100">#}
+        {#                <ul>#}
+        {#                    {% for category in categories %}#}
+        {#                        <li><a href="{% url 'product_categories_list' cat=category.slug %}">{{ category.title }}</a>#}
+        {#                        </li>#}
+        {#                    {% endfor %}#}
+        {#                </ul>#}
+        {#            </div>#}
+        {#        </section>#}
+        <section id="category">
+            <div class="container h-100">
+                <ul id="main-ul">
+                    {% for category in categories %}
+                        {% if not category.children.all %}
+                            <li class="main-li"><a class="main-a" href="{% url "product_categories_list" cat=category.slug %}">{{ category.title }}</a></li>
+                        {% else %}
+                            <li class="main-li">
+                                <a class="main-a" href="{% url "product_categories_list" cat=category.slug %}">{{ category.title }}</a>
+                                <ul class="inner-category">
+                                    {% for child in category.children.all %}
+                                        {% if not child.children.all %}
+                                            <li><a href="{% url "product_categories_list" cat=child.slug %}">{{ child.title }}</a></li>
+                                        {% else %}
+                                            <li><a href="{% url "product_categories_list" cat=child.slug %}">{{ child.title }}
+                                                <ul class="inner-category inner-category-2">
+                                                    {% for sub_child in child.children.all %}
+                                                        <li><a href="{% url "product_categories_list" cat=sub_child.slug %}">{{ sub_child.title }}</a></li>
+                                                    {% endfor %}
+                                                </ul>
+                                            </a></li>
+                                        {% endif %}
+                                    {% endfor %}
+                                </ul>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+        </section>
+        <aside id="sidebar">
+            <div class="product-search">
+                <div class="price-range-header">
+                    جست و جو محصولات
+                </div>
+                <div class="price-range-section">
+                    <form id="search-form" action="{% url 'products_list_view' %}" method="get">
+                        <i onclick="submitSearch()" class="fa-solid fa-magnifying-glass"></i>
+                        <input type="search" name="search" placeholder="جست و جو ...">
+                    </form>
+                </div>
+            </div>
+            <hr>
+            <div class="price-range-container">
+                <div class="price-range-header">
+                    فیلتر قیمت
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <form>
+                            <input type="hidden" name="min-value" value="">
+                            <input type="hidden" name="max-value" value="">
+                        </form>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-10 mx-auto">
+                        <div id="slider-range"></div>
+                    </div>
+                </div>
+                <div class="row text-white slider-labels">
+                    <div class="col-6 text-center caption">
+                        <span id="slider-range-value2"></span>
+                    </div>
+                    <div class="col-6 text-center caption">
+                        <span id="slider-range-value1"></span>
+                    </div>
+                </div>
+                <button id="price-range-button">فیلتر کردن</button>
+            </div>
+            <hr>
+            <div class="brand-filter-container">
+                <div class="price-range-header">
+                    انتخاب برند
+                </div>
+                {% for brand in brands %}
+                    <div onclick="insertParam('brand','{{ brand.english_title }}')" class="brand-filter-section">
+                        <p>{{ brand.title }}</p>
+                        <p>{{ brand.english_title }}</p>
+                    </div>
+                {% endfor %}
+
+            </div>
+            <hr>
+            <div class="available-products">
+                <div class="price-range-header">
+                    انتخاب موجودی
+                </div>
+                <div class="brand-filter-section">
+                    <label class="px-5" for="available-checkbox">وضعیت موجودی</label>
+                    <input type="checkbox" class="form-check-input" name="available-checkbox" id="available-checkbox">
+                </div>
+            </div>
+            <hr>
+            <div class="available-products">
+                <div class="price-range-header">
+                    حذف تمامی فیلتر ها
+                </div>
+                <div>
+                    <button onclick="resetAllFilters()" class="btn btn-primary text-white d-block mx-auto my-2">ریست
+                        کردن
+                    </button>
+                </div>
+            </div>
+        </aside>
+        <article id="product-list-container" class="purchase-container">
+            {% if products %}
+                {% for product in products %}
+                    <div onclick="goToDetailPage('{% url 'product_detail_view' slug=product.slug %}')"
+                         class="purchase-item">
+                        <div class="purchase-header">
+                            <div>
+                                {% thumbnail product.image "400x400" crop="center" quality=95 as im %}
+                                    <img src="{{ im.url }}" alt="product-image">
+                                {% endthumbnail %}
+                            </div>
+                            <span class="hot-offer">پیشنهاد ویژه</span>
+                        </div>
+                        <div class="purchase-text">
+                            {{ product.title }}
+                        </div>
+                        <div class="purchase-button">
+                            <button class="addtocart">
+                                <div class="pretext">
+                                    <i class="fas fa-cart-plus"></i> افزودن به سبد خرید
+                                </div>
+
+                                <div class="pretext done">
+                                    <div class="posttext"><i class="fas fa-check"></i> اضافه شد</div>
+                                </div>
+
+                            </button>
+                        </div>
+                        <div class="purchase-footer">
+                            <div class="right">{{ product.price|three_digits_currency }}</div>
+                            <div class="left"><span> 2.5 </span><i class="fa-solid fa-star"></i></div>
+                        </div>
+                    </div>
+                    <div onclick="goToDetailPage('{% url 'product_detail_view' slug=product.slug %}')"
+                         class="purchase-item">
+                        <div class="purchase-header">
+                            <div>
+                                {% thumbnail product.image "400x400" crop="center" quality=95 as im %}
+                                    <img src="{{ im.url }}" alt="product-image">
+                                {% endthumbnail %}
+                            </div>
+                            <span class="hot-offer">پیشنهاد ویژه</span>
+                        </div>
+                        <div class="purchase-text">
+                            {{ product.title }}
+                        </div>
+                        <div class="purchase-button">
+                            <button class="addtocart">
+                                <div class="pretext">
+                                    <i class="fas fa-cart-plus"></i> افزودن به سبد خرید
+                                </div>
+
+                                <div class="pretext done">
+                                    <div class="posttext"><i class="fas fa-check"></i> اضافه شد</div>
+                                </div>
+
+                            </button>
+                        </div>
+                        <div class="purchase-footer">
+                            <div class="right">{{ product.price|three_digits_currency }}</div>
+                            <div class="left"><span> 2.5 </span><i class="fa-solid fa-star"></i></div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p class="text-danger">هیچ محصولی یافت نشد</p>
+            {% endif %}
+        </article>
+        <section class="pagination-container">
+            <div class="pagination-content">
+                {% if products %}
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination justify-content-center">
+                            {% if products.has_previous %}
+                                <li class="page-item"><span
+                                        onclick="insertParam('page', '{{ products.previous_page_number }}')"
+                                        class="page-link">قبلی</span>
+                                </li>
+                            {% endif %}
+                            {% for pageNumber in products.paginator.page_range %}
+                                <li class="{% if products.number == pageNumber %} active {% endif %}">
+                                    <span onclick="insertParam('page', '{{ pageNumber }}')"
+                                          class="page-link">{{ pageNumber }}</span>
+                                </li>
+                            {% endfor %}
+                            {% if products.has_next %}
+                                <li class="page-item"><span
+                                        onclick="insertParam('page', '{{ products.next_page_number }}')"
+                                        class="page-link">بعدی</span>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                {% endif %}
+            </div>
+        </section>
+    </div>
+{% endblock %}
+{% block custom_script %}
+    <script src="{% static 'script/product-list.js' %}"></script>
+{% endblock %}

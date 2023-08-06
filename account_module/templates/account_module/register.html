@@ -1,0 +1,30 @@
+{% extends 'shared/_layout.html' %}
+{% load static %}
+{% block title %}
+    ثبت نام
+{% endblock %}
+{% block custom_style %}
+    <link rel="stylesheet" href="{% static 'css/register.css' %}">
+{% endblock %}
+{% block content %}
+    <section class="register-container">
+        <div class="register-section">
+            <div class="register-inner">
+                <div class="header">فرم ثبت نام</div>
+                <div class="content">
+                    <form class="register-form" id="register-form" action="{% url 'register_view' %}" method="post">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <button class="btn mx-auto d-block" id="submit-register-btn"
+                                type="submit">ثبت نام
+                        </button>
+                        <p class="text-center">اگر حساب کاربری دارید برای <a href="{% url 'login_view' %}">ورود</a> کلیک کنید</p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+{% block custom_script %}
+    <script src="{% static 'script/register.js' %}"></script>
+{% endblock %}

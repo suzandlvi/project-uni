@@ -1,0 +1,36 @@
+{% extends 'shared/_layout.html' %}
+{% load static %}
+{% block title %}
+ویرایش اطلاعات
+{% endblock %}
+{% block custom_style %}
+    <link rel="stylesheet" href="{% static 'css/user-panel.css' %}">
+{% endblock %}
+{% block content %}
+<section class="user-panel-container">
+        <div class="container">
+            <div class="main-body">
+                <div class="row gutters-sm">
+                    <div class="col-md-4 mb-3">
+                        {% include 'account_module/includes/user_profile.html' with user=user %}
+                        {% include 'account_module/includes/user_panel_items.html' %}
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <form action="{% url 'edit_user_info_view' %}" method="post" enctype="multipart/form-data">
+                                    {% csrf_token %}
+                                    {{ form }}
+                                    <button type="submit" class="btn btn-lg btn-block checkout-btn">ارسال</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+{% block custom_script %}
+
+{% endblock %}

@@ -1,0 +1,148 @@
+{% extends 'shared/_layout.html' %}
+{% load static %}
+{% block title %}
+    shipment
+{% endblock %}
+
+{% block custom_style %}
+    <link rel="stylesheet" href="{% static 'css/shipment.css' %}">
+{% endblock %}
+{% block content %}
+    <div class="cart-purchase-price-container">
+        <div class="col-12">
+            <div class="card mb-4">
+                <div class="card-header py-3">
+                    <div class="mb-0 text-center cart-purchase-price-header">وارد کردن اطلاعات</div>
+                </div>
+                <div class="card-body">
+                    <form action="{% url "shipment_view" %}" method="post">
+                        {% csrf_token %}
+                        <div class="shipment-container">
+                            <div class="personal-info">
+                                <div class="shipment-header">مشخصات تحویل گیرنده</div>
+                                <div class="shipment-body">
+                                    <div class="personal-info-form">
+                                        <label class="form-label" for="first_name"> <span>*</span> نام : </label>
+                                        <input name="first_name" id="first_name" class="form-control" type="text"
+                                               placeholder="نام ..." required>
+                                        <label class="form-label" for="last_name"> <span>*</span> نام خانوادگی : </label>
+                                        <input name="last_name" id="last_name" class="form-control" type="text"
+                                               placeholder="نام خانوادگی ..." required>
+                                        <label class="form-label" for="national_code"> <span>*</span> کد ملی : </label>
+                                        <input name="national_code" id="national_code" class="form-control" type="text"
+                                               placeholder="کد ملی ..." required>
+                                        <label class="form-label" for="phone_number"> <span>*</span> شماره تماس : </label>
+                                        <input name="phone_number" id="phone_number" class="form-control" type="text"
+                                               placeholder="شماره تماس ..." required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="address-info">
+                                <div class="shipment-header">مشخصات مکان</div>
+                                <div class="shipment-body">
+                                    <div class="personal-info-form">
+                                        <div class="double-input">
+                                            <div class="form-group">
+                                                <label class="form-label" for="select_province"> <span>*</span> استان : </label>
+                                                <select name="province" class="form-control" id="select_province" required>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="form-label" for="select_city"> <span>*</span> شهر : </label>
+                                                <select name="city" class="form-control" id="select_city" required>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="double-input">
+                                            <div class="form-group">
+                                                <label class="form-label" for="house_number">پلاک خانه : </label>
+                                                <input name="house_number" id="house_number" class="form-control"
+                                                       type="text"
+                                                       placeholder="پلاک ...">
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="form-label" for="building_unit">واحد خانه : </label>
+                                                <input name="building_unit" id="building_unit" class="form-control"
+                                                       type="text"
+                                                       placeholder="واحد ...">
+                                            </div>
+                                        </div>
+                                        <label class="form-label" for="postal_code"> <span>*</span> کد پستی : </label>
+                                        <input name="postal_code" id="postal_code" class="form-control" type="text"
+                                               placeholder="کد پستی ..." required>
+                                        <label class="form-label" for="address"> <span>*</span> آدرس پستی : </label>
+                                        <input name="address" id="address" class="form-control" type="text"
+                                               placeholder="آدرس پستی ..." required>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <button id="submit-shipment-btn" class="btn mx-auto d-block shipment-button" type="submit">خرید</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <span style="display: none" id="error">{{ error }}</span>
+    <span style="display: none" id="error_field">{{ error_field }}</span>
+{% endblock %}
+{% block custom_script %}
+    <script !src="">
+        let error = document.getElementById("error").innerText;
+        let error_field = document.getElementById("error_field").innerText;
+        if (error || error_field){
+            let problemField = document.getElementById(error_field);
+            let errorElement = document.createElement("span")
+            errorElement.innerText = error;
+            errorElement.classList.add("error-field");
+            if (problemField){
+                problemField.after(errorElement)}
+            else {
+             document.getElementById("submit-shipment-btn").after(errorElement);
+            }
+        }
+
+
+
+        let selectProvince = document.getElementById('select_province')
+        let selectCity = document.getElementById('select_city')
+        fetch("https://iran-locations-api.vercel.app/api/v1/states")
+            .then(res => res.json())
+            .then(res => {
+                res.forEach(item => {
+                    let newOption = document.createElement('option')
+                    newOption.value = item.name;
+                    newOption.innerText = item.name;
+                    selectProvince.appendChild(newOption)
+                })
+            })
+            .catch(error => console.log(error))
+        fetch(`https://iran-locations-api.vercel.app/api/v1/cities?state=آذربايجان شرقی`)
+            .then(res => res.json())
+            .then(res => {
+                selectCity.innerHTML = ''
+                res.cities.forEach(item => {
+                    let newOption = document.createElement('option')
+                    newOption.value = item.name;
+                    newOption.innerText = item.name;
+                    selectCity.appendChild(newOption)
+                })
+            })
+            .catch(error => console.log(error))
+        selectProvince.addEventListener("change", (event) => {
+            let selectedProvince = event.target.value;
+            fetch(`https://iran-locations-api.vercel.app/api/v1/cities?state=${selectedProvince}`)
+                .then(res => res.json())
+                .then(res => {
+                    selectCity.innerHTML = ''
+                    res.cities.forEach(item => {
+                        let newOption = document.createElement('option')
+                        newOption.value = item.name;
+                        newOption.innerText = item.name;
+                        selectCity.appendChild(newOption)
+                    })
+                })
+                .catch(error => console.log(error))
+        })
+    </script>
+{% endblock %}

@@ -1,0 +1,62 @@
+{% extends 'shared/_layout.html' %}
+
+{% block title %}
+    random
+{% endblock %}
+{% block custom_style %}
+
+{% endblock %}
+{% block content %}
+    {% csrf_token %}
+    <div id="a1" data-filename="test.rar">Click to download</div>
+{% endblock %}
+{% block custom_script %}
+    <script>
+        $('#a1').click(function () {
+            var that = this;
+            var page_url = '/products/test/';
+
+            var req = new XMLHttpRequest();
+            let cookie = document.cookie
+            let csrfToken = cookie.substring(cookie.indexOf('=') + 1)
+            let csrf = document.getElementsByName('csrfmiddlewaretoken')[0].value
+            console.log(csrfToken)
+            console.log(csrf)
+
+            {#req.setRequestHeader("Content-Type", "text/plain;charset=UTF-8");#}
+            {#req.send();#}
+            req.open("post", page_url, true);
+            req.setRequestHeader("X-CSRFToken", csrf);
+
+            req.addEventListener("progress", function (evt) {
+                if (evt.lengthComputable) {
+                    var percentComplete = evt.loaded / evt.total;
+                    console.log(percentComplete);
+                }
+            }, false);
+
+            req.responseType = "blob";
+            req.onreadystatechange = function () {
+                if (req.readyState === 4 && req.status === 200) {
+                    var filename = $(that).data('filename');
+                    if (typeof window.chrome !== 'undefined') {
+                        // Chrome version
+                        var link = document.createElement('a');
+                        link.href = window.URL.createObjectURL(req.response);
+                        link.download = filename;
+                        link.click();
+                    } else if (typeof window.navigator.msSaveBlob !== 'undefined') {
+                        // IE version
+                        var blob = new Blob([req.response], {type: 'application/force-download'});
+                        window.navigator.msSaveBlob(blob, filename);
+                    } else {
+                        // Firefox version
+                        var file = new File([req.response], filename, {type: 'application/force-download'});
+                        window.open(URL.createObjectURL(file));
+                    }
+                }
+            };
+            req.send();
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends 'shared/_layout.html' %}
+{% load static %}
+{% load poll_extras %}
+{% load jalali_tags %}
+{% load thumbnail %}
+
+{% block title %}
+    تاریخچه سفارشات
+{% endblock %}
+{% block custom_style %}
+    <link rel="stylesheet" href="{% static 'css/user-panel.css' %}">
+    <link rel="stylesheet" href="{% static 'css/order-history.css' %}">
+{% endblock %}
+{% block content %}
+    <section class="user-panel-container">
+        <div class="container">
+            <div class="main-body">
+                <div class="row gutters-sm">
+                    <div class="col-md-4 mb-3">
+                        {% include 'account_module/includes/user_profile.html' with user=user %}
+                        {% include 'account_module/includes/user_panel_items.html' %}
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card mb-3">
+                            <div class="order-history-header">تاریخچه سفارشات</div>
+                            <div class="card-body">
+                                {% for order in orders %}
+                                    <div class="order-item">
+                                        <p class="order-check"><i class="fa-solid fa-circle-check"></i><span>تحویل داده شده</span>
+                                        </p>
+                                        <p class="order-detail">
+                                            <span>{{ order.payment_date | show_jalali_date | change_month }}</span><span> کد سفارش : {{ order.id }}</span><span> مبلغ سفارش : {{ order.calculate_total_price|three_digits_currency }}</span>
+                                            <span><a href="{% url 'order_history_export_view' order_id=order.id %}"
+                                                     class="btn btn-primary btn-sm text-white">دانلود فاکتور</a></span>
+                                        </p>
+                                        <div class="order-images">
+                                            {% for order_detail in order.orderdetail_set.all %}
+                                                {% thumbnail order_detail.product.image "300x300" qulity="95" crop="center" as im %}
+                                                    <a href="{% url 'product_detail_view' slug=order_detail.product.slug %}">
+                                                        <div class="order-image"><img
+                                                                src="{{ im.url }}"
+                                                                alt=""></div>
+                                                    </a>
+                                                {% endthumbnail %}
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+{% block custom_script %}
+
+{% endblock %}
